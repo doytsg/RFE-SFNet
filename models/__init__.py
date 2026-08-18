@@ -2,7 +2,7 @@ from .almformer import ALMformer
 from .cnn_transformer import CNNTransformer
 from .convformer_nse import ConvformerNSE
 from .drsn_cw import DRSN_CW, DRSN_CW_Lite
-from .fe_sfnet import FESFNet
+from .rfe_sfnet import RFESFNet
 from .gtfenet import GTFENET
 from .liconvformer import Liconvformer
 from .mslk_transformer import MSLKTransformer
@@ -16,7 +16,7 @@ __all__ = [
     "ConvformerNSE",
     "DRSN_CW",
     "DRSN_CW_Lite",
-    "FESFNet",
+    "RFESFNet",
     "GTFENET",
     "Liconvformer",
     "MSLKTransformer",

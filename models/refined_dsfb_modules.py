@@ -1,4 +1,4 @@
-"""Lightweight spectral token mixer and FFN blocks for FE-SFNet.
+"""Lightweight spectral token mixer and FFN blocks for RFE-SFNet.
 
 The default mixer is the concise H6R4+R8 variant: six complete low-rank
 spectral heads, all-head softmax routing, and a head-specific rank-8 channel

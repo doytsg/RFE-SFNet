@@ -2,7 +2,7 @@ import argparse
 
 import torch
 
-from models.fe_sfnet import FESFNet
+from models.rfe_sfnet import RFESFNet
 from train_common import (
     ExperimentConfig,
     add_common_args,
@@ -35,7 +35,7 @@ def add_bool_arg(parser, name: str, default: bool, help_text: str):
 
 
 def build_parser():
-    parser = argparse.ArgumentParser(description="FE-SFNet for bearing fault diagnosis")
+    parser = argparse.ArgumentParser(description="RFE-SFNet for bearing fault diagnosis")
     add_common_args(parser)
     parser.add_argument("--d_model", type=int, default=128)
     parser.add_argument("--n_blocks", type=int, default=1, help="Number of DSFB encoder layers")
@@ -91,7 +91,7 @@ def build_parser():
 def build_model(args):
     frontend_dilations = parse_dilations(args.frontend_dilations)
     token_mixer = "self_attention" if args.use_mhsa else args.token_mixer
-    model = FESFNet(
+    model = RFESFNet(
         num_classes=args.num_classes,
         d_model=args.d_model,
         num_layers=args.n_blocks,
@@ -128,7 +128,7 @@ def main():
     print(f"Using device: {device}")
 
     print("=" * 60)
-    print("FE-SFNet Training")
+    print("RFE-SFNet Training")
     print("=" * 60)
 
     model, frontend_dilations, token_mixer = build_model(args)
@@ -144,19 +144,19 @@ def main():
 
     is_mhsa = token_mixer == "self_attention"
     config = ExperimentConfig(
-        model_key="fe_sfnet_mhsa" if is_mhsa else "fe_sfnet",
-        model_display_name="FE-SFNet-MHSA" if is_mhsa else "FE-SFNet",
+        model_key="rfe_sfnet_mhsa" if is_mhsa else "rfe_sfnet",
+        model_display_name="RFE-SFNet-MHSA" if is_mhsa else "RFE-SFNet",
         confusion_title=(
-            "Confusion Matrix - FE-SFNet-MHSA"
+            "Confusion Matrix - RFE-SFNet-MHSA"
             if is_mhsa
-            else "Confusion Matrix - FE-SFNet"
+            else "Confusion Matrix - RFE-SFNet"
         ),
         noise_plot_title=(
-            "FE-SFNet-MHSA Robustness Under Different Noise Levels"
+            "RFE-SFNet-MHSA Robustness Under Different Noise Levels"
             if is_mhsa
-            else "FE-SFNet Robustness Under Different Noise Levels"
+            else "RFE-SFNet Robustness Under Different Noise Levels"
         ),
-        history_title_suffix="FE-SFNet-MHSA" if is_mhsa else "FE-SFNet",
+        history_title_suffix="RFE-SFNet-MHSA" if is_mhsa else "RFE-SFNet",
         classification_zero_division=0,
     )
     run_experiment(args, model, device, config)

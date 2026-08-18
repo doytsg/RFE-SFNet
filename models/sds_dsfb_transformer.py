@@ -1,4 +1,4 @@
-"""FE-SFNet implementation with the lightweight Spectral Filter Mixer."""
+"""RFE-SFNet implementation with the lightweight Spectral Filter Mixer."""
 
 from __future__ import annotations
 
@@ -27,7 +27,7 @@ def _build_sinusoidal_pe(max_len: int, d_model: int) -> torch.Tensor:
     return pe
 
 
-class FESFNet(nn.Module):
+class RFESFNet(nn.Module):
     def __init__(
         self,
         num_classes: int = 10,
@@ -140,12 +140,12 @@ class FESFNet(nn.Module):
         return self.head(x)
 
 
-SDSDSFBTransformer = FESFNet
+SDSDSFBTransformer = RFESFNet
 
 
 if __name__ == "__main__":
     for mixer in ("no_phase", "self_attention", "dsfb"):
-        model = FESFNet(
+        model = RFESFNet(
             num_classes=10,
             d_model=128,
             num_layers=1,

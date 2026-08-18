@@ -9,7 +9,7 @@ from models.drsn_cw import DRSN_CW, DRSN_CW_Lite
 from models.gtfenet import GTFENET
 from models.liconvformer import Liconvformer
 from models.mslk_transformer import MSLKTransformer
-from models.fe_sfnet import FESFNet
+from models.rfe_sfnet import RFESFNet
 from models.tslanet import TSLANet
 from models.wdcnn import WDCNN
 from train_common import (
@@ -278,12 +278,12 @@ def run_mslk(args, device):
     run_experiment(args, model, device, config)
 
 
-def run_fe_sfnet(args, device):
+def run_rfe_sfnet(args, device):
     frontend_dilations = parse_dilations(args.frontend_dilations)
     token_mixer = "self_attention" if args.use_mhsa else args.token_mixer
     use_lean_csmoh = token_mixer in ("no_phase", "csmoh_plus", "competitive_moh_dsfb")
     print("=" * 60)
-    print("FE-SFNet Training")
+    print("RFE-SFNet Training")
     print("=" * 60)
     print(f"[INFO] RFE-Stem dilations: {frontend_dilations}")
     print(f"[INFO] SF Blocks: {args.n_blocks}, d_model={args.d_model}, mlp_ratio={args.mlp_ratio}")
@@ -346,24 +346,24 @@ def run_fe_sfnet(args, device):
         model_kwargs.update(
             moh_expert_strength=args.moh_expert_strength,
         )
-    model = FESFNet(**model_kwargs).to(device)
+    model = RFESFNet(**model_kwargs).to(device)
     maybe_report_model_stats(model, args.window_size, device, THOP_AVAILABLE, profile, clever_format)
 
     is_mhsa = token_mixer == "self_attention"
     config = ExperimentConfig(
-        model_key="fe_sfnet_mhsa" if is_mhsa else "fe_sfnet",
-        model_display_name="FE-SFNet-MHSA" if is_mhsa else "FE-SFNet",
+        model_key="rfe_sfnet_mhsa" if is_mhsa else "rfe_sfnet",
+        model_display_name="RFE-SFNet-MHSA" if is_mhsa else "RFE-SFNet",
         confusion_title=(
-            "Confusion Matrix - FE-SFNet-MHSA"
+            "Confusion Matrix - RFE-SFNet-MHSA"
             if is_mhsa
-            else "Confusion Matrix - FE-SFNet"
+            else "Confusion Matrix - RFE-SFNet"
         ),
         noise_plot_title=(
-            "FE-SFNet-MHSA Robustness Under Different Noise Levels"
+            "RFE-SFNet-MHSA Robustness Under Different Noise Levels"
             if is_mhsa
-            else "FE-SFNet Robustness Under Different Noise Levels"
+            else "RFE-SFNet Robustness Under Different Noise Levels"
         ),
-        history_title_suffix="FE-SFNet-MHSA" if is_mhsa else "FE-SFNet",
+        history_title_suffix="RFE-SFNet-MHSA" if is_mhsa else "RFE-SFNet",
         classification_zero_division=0,
     )
     run_experiment(args, model, device, config)
@@ -451,13 +451,13 @@ def build_parser():
     mslk.set_defaults(snr_list="-12,-11,-10,-9,-8,-7,-6,-5,-4,-2,0,2,4,6,8,10,12")
     mslk.set_defaults(run_fn=run_mslk)
 
-    fe_sfnet = add_base_subparser(
+    rfe_sfnet = add_base_subparser(
         subparsers,
-        "fesfnet",
-        "Train FE-SFNet",
-        aliases=["fe-sfnet", "fe_sfnet", "sds_dsfb", "sds_dsfb_transformer", "sds"],
+        "rfesfnet",
+        "Train RFE-SFNet",
+        aliases=["rfe-sfnet", "rfe_sfnet", "sds_dsfb", "sds_dsfb_transformer", "sds"],
     )
-    sds_dsfb = fe_sfnet
+    sds_dsfb = rfe_sfnet
     sds_dsfb.add_argument("--d_model", type=int, default=128)
     sds_dsfb.add_argument("--n_blocks", type=int, default=1, help="Number of SF Blocks")
     sds_dsfb.add_argument("--max_len", type=int, default=128, help="Maximum token length after RFE-Stem")
@@ -543,7 +543,7 @@ def build_parser():
     sds_dsfb.add_argument("--frontend_dilations", type=str, default="1,4,12",
                           help="Comma-separated dilations for RFE-Stem")
     sds_dsfb.set_defaults(snr_list="-12,-11,-10,-9,-8,-7,-6,-5,-4,-2,0,2,4,6,8,10,12")
-    sds_dsfb.set_defaults(run_fn=run_fe_sfnet)
+    sds_dsfb.set_defaults(run_fn=run_rfe_sfnet)
 
     return parser
 

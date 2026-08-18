@@ -1,14 +1,14 @@
-# FE-SFNet
+# RFE-SFNet
 
-Code for **FE-SFNet: Feature Extraction-Spectral Filtering Network** for lightweight, noise-robust bearing fault diagnosis from raw one-dimensional vibration signals.
+Code for **RFE-SFNet: Robust Feature Extraction-Spectral Filtering Network** for lightweight, noise-robust bearing fault diagnosis from raw one-dimensional vibration signals.
 
 This repository contains the training code, model definitions, dataset loaders, and baseline implementations used in the experiments. Datasets, trained checkpoints, generated figures, logs, and result files are intentionally not included.
 
 ## Highlights
 
 - Raw 1-D vibration signal classification for PU and CWRU bearing datasets.
-- FE-SFNet implementation with a Robust Feature Extraction Stem (RFE-Stem) and attention-free Spectral Filter Mixer (SFM).
-- Unified training entry for FE-SFNet and several comparison models.
+- RFE-SFNet implementation with a Robust Feature Extraction Stem (RFE-Stem) and attention-free Spectral Filter Mixer (SFM).
+- Unified training entry for RFE-SFNet and several comparison models.
 - SNR-controlled synthetic noise augmentation and evaluation.
 - Few-shot training support through fixed samples per class.
 - File-level splitting for PU data to reduce leakage between training and testing.
@@ -18,12 +18,12 @@ This repository contains the training code, model definitions, dataset loaders, 
 ```text
 .
 |-- train_model.py              # Unified training entry
-|-- train_fe_sfnet.py           # Single-model FE-SFNet training entry
+|-- train_rfe_sfnet.py          # Single-model RFE-SFNet training entry
 |-- train_common.py             # Shared training, evaluation, splitting, and noise utilities
 |-- cwru_dataset.py             # CWRU, PU-BS-10, and PU-A2R dataset loaders
 |-- export_tsne_features.py     # Optional feature export and t-SNE utility
 |-- models/
-|   |-- fe_sfnet.py             # Public FE-SFNet import wrapper
+|   |-- rfe_sfnet.py            # Public RFE-SFNet import wrapper
 |   |-- sds_dsfb_transformer.py # Backward-compatible implementation file
 |   |-- sds_frontend.py         # RFE-Stem and Haar-Down modules
 |   |-- refined_dsfb_modules.py # SFM and Li-FFN modules
@@ -78,22 +78,22 @@ For CWRU, the loader recursively scans `.mat` files and uses directory names suc
 You can also pass a custom data directory:
 
 ```bash
-python train_model.py fesfnet --data_dir path/to/PU_extracted
-python train_model.py fesfnet --dataset cwru --data_dir path/to/CWRU
+python train_model.py rfesfnet --data_dir path/to/PU_extracted
+python train_model.py rfesfnet --dataset cwru --data_dir path/to/CWRU
 ```
 
 ## Quick Start
 
-Train FE-SFNet on the default PU-BS-10 setup:
+Train RFE-SFNet on the default PU-BS-10 setup:
 
 ```bash
-python train_model.py fesfnet --data_dir PU_extracted --epochs 100
+python train_model.py rfesfnet --data_dir PU_extracted --epochs 100
 ```
 
 Train under fixed Gaussian noise and evaluate multiple SNR levels:
 
 ```bash
-python train_model.py fesfnet ^
+python train_model.py rfesfnet ^
   --data_dir PU_extracted ^
   --train_noise --val_noise --snr_per_sample ^
   --noise_type gaussian --train_snr_min -12 --train_snr_max -12 ^
@@ -105,19 +105,19 @@ python train_model.py fesfnet ^
 Few-shot training:
 
 ```bash
-python train_model.py fesfnet --data_dir PU_extracted --train_samples_per_class 50
+python train_model.py rfesfnet --data_dir PU_extracted --train_samples_per_class 50
 ```
 
 CWRU training:
 
 ```bash
-python train_model.py fesfnet --dataset cwru --data_dir data --num_classes 10
+python train_model.py rfesfnet --dataset cwru --data_dir data --num_classes 10
 ```
 
-Older command names are still supported for compatibility:
+Alternative command aliases are also supported:
 
 ```bash
-python train_model.py fe-sfnet ...
+python train_model.py rfe-sfnet ...
 python train_model.py sds_dsfb ...
 ```
 
@@ -125,7 +125,7 @@ python train_model.py sds_dsfb ...
 
 The unified entry supports:
 
-- `fesfnet`
+- `rfesfnet`
 - `cnn_transformer`
 - `convformer_nse`
 - `liconvformer`
@@ -140,7 +140,7 @@ Show command-line options with:
 
 ```bash
 python train_model.py -h
-python train_model.py fesfnet -h
+python train_model.py rfesfnet -h
 ```
 
 ## Outputs
@@ -159,13 +159,13 @@ Useful options:
 
 ## Notes
 
-- The public model name is FE-SFNet. Some implementation files retain the earlier internal `sds_dsfb` name only to preserve compatibility with previous scripts.
+- The public model name is RFE-SFNet. Some implementation files retain the earlier internal `sds_dsfb` name only to preserve compatibility with previous scripts.
 - No pretrained weights are included. Train your own checkpoints from the downloaded datasets.
 - Reported numbers can vary with GPU, PyTorch version, split settings, seeds, and dataset preprocessing.
 
 ## Citation
 
-If this repository is useful for your research, please cite the corresponding FE-SFNet paper when it becomes available.
+If this repository is useful for your research, please cite the corresponding RFE-SFNet paper when it becomes available.
 
 ## License
 

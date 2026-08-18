@@ -15,7 +15,7 @@ from models.drsn_cw import DRSN_CW, DRSN_CW_Lite
 from models.gtfenet import GTFENET
 from models.liconvformer import Liconvformer
 from models.mslk_transformer import MSLKTransformer
-from models.fe_sfnet import FESFNet
+from models.rfe_sfnet import RFESFNet
 from models.tslanet import TSLANet
 from models.wdcnn import WDCNN
 from train_common import (
@@ -114,7 +114,7 @@ def _build_model(args, device):
             channel_mixer_groups=args.channel_mixer_groups,
             use_channel_mixer=not args.no_channel_mixer,
         )
-    elif args.model in ("fesfnet", "fe-sfnet", "fe_sfnet", "sds_dsfb", "sds_dsfb_transformer", "sds"):
+    elif args.model in ("rfesfnet", "rfe-sfnet", "rfe_sfnet", "sds_dsfb", "sds_dsfb_transformer", "sds"):
         token_mixer = "self_attention" if args.use_mhsa else args.token_mixer
         model_kwargs = dict(
             num_classes=args.num_classes,
@@ -149,7 +149,7 @@ def _build_model(args, device):
                 moh_expert_strength=args.moh_expert_strength,
                 moh_proj_rank=args.moh_proj_rank,
             )
-        model = FESFNet(**model_kwargs)
+        model = RFESFNet(**model_kwargs)
     else:
         raise ValueError(f"Unsupported model: {args.model}")
     return model.to(device)
